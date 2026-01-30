@@ -42,8 +42,8 @@ BUSINESSES = [
         'id': 'woo-combine',
         'name': 'Woo-Combine',
         'url': 'https://woo-combine.com',
-        'description': 'Athletic combines (needs work)',
-        'priority': 'low',
+        'description': 'Athletic combines - React SPA with Firebase',
+        'priority': 'medium',
         'icon': '🏃'
     },
     {
@@ -84,12 +84,14 @@ def check_site_health(business):
         result['response_time_ms'] = round(elapsed)
         
         if response.status_code == 200:
-            # Check if we got actual content (not just a blank page)
-            if len(response.text) > 100:
+            # Check if we got actual content
+            # Note: SPAs may return small HTML shells that render via JS - that's fine
+            content_len = len(response.text)
+            if content_len > 50:  # Even SPA shells are >50 chars
                 result['status'] = 'healthy'
             else:
                 result['status'] = 'degraded'
-                result['error'] = 'Page loads but has minimal content'
+                result['error'] = 'Page loads but appears empty'
         elif response.status_code in [301, 302]:
             result['status'] = 'redirect'
         else:
